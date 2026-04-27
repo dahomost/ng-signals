@@ -1,24 +1,12 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import DOMPurify from 'dompurify';
+import { User } from '../../core/models/user.model';
 
 @Component({
   standalone: true,
   selector: 'app-signup',
-  imports: [
-    ReactiveFormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatProgressSpinnerModule
-  ],
+  imports: [ReactiveFormsModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
@@ -31,18 +19,11 @@ export class SignupComponent {
   readonly success = signal('');
 
   readonly form = this.fb.group({
-    firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
-    lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+    firstName: ['', [Validators.required, Validators.minLength(2)]],
+    lastName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    password: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.maxLength(30),
-        Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/)
-      ]
-    ],
+    phoneNumber: [''],
+    password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['']
   });
 
@@ -51,18 +32,11 @@ export class SignupComponent {
     return password === confirmPassword;
   });
 
-  constructor() {
-    effect(() => {
-      console.log('Form valid:', this.form.valid);
-    });
-  }
-
   submit(): void {
     this.form.markAllAsTouched();
 
     if (this.form.invalid || !this.passwordsMatch()) {
       this.error.set('Invalid form');
-      this.success.set('');
       return;
     }
 
@@ -70,9 +44,20 @@ export class SignupComponent {
     this.error.set('');
     this.success.set('');
 
-    const cleanData = DOMPurify.sanitize(JSON.stringify(this.form.value));
+    const user: User = {
+      id: Date.now().toString(),
+      first_name: this.form.value.firstName!,
+      last_name: this.form.value.lastName!,
+      email: this.form.value.email!,
+      phone_number: this.form.value.phoneNumber || '',
+      password: this.form.value.password!,
+      role: 'user',
+      is_active: true,
+      created_at: new Date().toISOString(),
+      how_found_us: 'signup'
+    };
 
-    this.http.post('/api/signup', JSON.parse(cleanData)).subscribe({
+    this.http.post('/api/signup', user).subscribe({
       next: () => {
         this.success.set('Account created');
         this.form.reset();

@@ -3,14 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import DOMPurify from 'dompurify';
 import { SignupComponent } from './signup.component';
-
-vi.mock('dompurify', () => ({
-  default: {
-    sanitize: vi.fn((value: string) => value)
-  }
-}));
 
 describe('SignupComponent (Vitest)', () => {
   let component: SignupComponent;
@@ -71,13 +64,15 @@ describe('SignupComponent (Vitest)', () => {
 
     component.submit();
 
-    expect(DOMPurify.sanitize).toHaveBeenCalledOnce();
     expect(httpPostMock).toHaveBeenCalledWith(
       '/api/signup',
       expect.objectContaining({
-        firstName: 'Jane',
-        lastName: 'Doe',
-        email: 'jane@example.com'
+        first_name: 'Jane',
+        last_name: 'Doe',
+        email: 'jane@example.com',
+        password: 'StrongPass1',
+        role: 'user',
+        is_active: true
       })
     );
     expect(component.success()).toBe('Account created');
