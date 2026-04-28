@@ -1,6 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+/** Same path the dev server proxies to serverless-offline (see proxy.conf.json). */
+const REGISTER_PATH = '/api/v1/register';
+
 @Component({
   standalone: true,
   selector: 'app-signup',
@@ -16,25 +20,64 @@ export class SignupComponent {
   readonly error = signal('');
   readonly success = signal('');
 
-  readonly form = this.fb.group({
+  /** Show invalid styling after submit attempt or blur (handled via touched). */
+  readonly form = this.fb.nonNullable.group({
     firstName: ['', [Validators.required, Validators.minLength(2)]],
     lastName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    phoneNumber: [''],
+    phoneNumber: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    confirmPassword: ['']
+    confirmPassword: ['', [Validators.required]],
+    address: ['', [Validators.required, Validators.minLength(3)]],
+    ssn: [
+      '',
+      [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]
+    ]
   });
 
   readonly passwordsMatch = computed(() => {
-    const { password, confirmPassword } = this.form.value;
+    const { password, confirmPassword } = this.form.getRawValue();
     return password === confirmPassword;
   });
+
+  fieldMessage(controlName: string): string {
+    const c = this.form.get(controlName);
+    if (!c?.errors || (!c.touched && !c.dirty)) {
+      return '';
+    }
+    const e = c.errors;
+    if (e['required']) {
+      return 'This field is required.';
+    }
+    if (e['minlength']) {
+      const need = (e['minlength'] as { requiredLength: number }).requiredLength;
+      return `Enter at least ${need} characters.`;
+    }
+    if (e['email']) {
+      return 'Enter a valid email address.';
+    }
+    if (e['pattern']) {
+      return 'Use format 111-22-3333.';
+    }
+    return '';
+  }
+
+  confirmPasswordMessage(): string {
+    const pw = this.form.controls.password;
+    const cf = this.form.controls.confirmPassword;
+    if (!(cf.touched || pw.touched)) {
+      return '';
+    }
+    if (!this.passwordsMatch() && pw.value.length > 0 && cf.value.length > 0) {
+      return 'Passwords do not match.';
+    }
+    return '';
+  }
 
   submit(): void {
     this.form.markAllAsTouched();
 
     if (this.form.invalid || !this.passwordsMatch()) {
-      this.error.set('Invalid form');
       return;
     }
 
@@ -42,18 +85,18 @@ export class SignupComponent {
     this.error.set('');
     this.success.set('');
 
+    const v = this.form.getRawValue();
     const payload = {
-      first_name: this.form.value.firstName!,
-      last_name: this.form.value.lastName!,
-      email: this.form.value.email!,
-      password: this.form.value.password!,
-      phone_number: this.form.value.phoneNumber || '',
-      address: '',
-      ssn: ''
+      first_name: v.firstName.trim(),
+      last_name: v.lastName.trim(),
+      email: v.email.trim(),
+      password: v.password,
+      phone_number: v.phoneNumber.trim(),
+      address: v.address.trim(),
+      ssn: v.ssn.trim()
     };
 
-    // Dev: `ng serve` uses proxy.conf.json → http://127.0.0.1:31500 (serverless-offline).
-    this.http.post('/api/v1/register', payload).subscribe({
+    this.http.post(REGISTER_PATH, payload).subscribe({
       next: () => {
         this.success.set('Account created');
         this.form.reset();

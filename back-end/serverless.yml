@@ -30,7 +30,7 @@ provider:
             - dynamodb:PutItem
             - dynamodb:GetItem
           Resource:
-            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:custom.usersTableName}
+            - !GetAtt UsersDynamoTable.Arn
 
 functions:
   ping:
@@ -49,3 +49,19 @@ functions:
 
 plugins:
   - serverless-offline
+
+# Creates the DynamoDB table on `serverless deploy`. If you already have a table with the same name,
+# either delete it in the console or remove this `resources` block and keep only what exists.
+resources:
+  Resources:
+    UsersDynamoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.usersTableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH

@@ -5,6 +5,17 @@ import { of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SignupComponent } from './signup.component';
 
+const validBase = {
+  firstName: 'Jane',
+  lastName: 'Doe',
+  email: 'jane@example.com',
+  phoneNumber: '1234567890',
+  address: '123 Main St',
+  ssn: '111-22-3333',
+  password: 'StrongPass1',
+  confirmPassword: 'StrongPass1'
+};
+
 describe('SignupComponent (Vitest)', () => {
   let component: SignupComponent;
   let httpPostMock: ReturnType<typeof vi.fn>;
@@ -27,10 +38,7 @@ describe('SignupComponent (Vitest)', () => {
 
   it('returns false when passwords do not match', () => {
     component.form.patchValue({
-      firstName: 'Jane',
-      lastName: 'Doe',
-      email: 'jane@example.com',
-      password: 'StrongPass1',
+      ...validBase,
       confirmPassword: 'Different1'
     });
 
@@ -41,13 +49,16 @@ describe('SignupComponent (Vitest)', () => {
     component.form.patchValue({
       firstName: 'J',
       email: 'bad-email',
+      phoneNumber: '',
+      address: 'x',
+      ssn: 'bad',
       password: 'weak',
       confirmPassword: 'weak'
     });
 
     component.submit();
 
-    expect(component.error()).toBe('Invalid form');
+    expect(component.error()).toBe('');
     expect(httpPostMock).not.toHaveBeenCalled();
   });
 
@@ -55,11 +66,14 @@ describe('SignupComponent (Vitest)', () => {
     httpPostMock.mockReturnValue(of({}));
 
     component.form.patchValue({
-      firstName: 'Jane',
-      lastName: 'Doe',
-      email: 'jane@example.com',
-      password: 'StrongPass1',
-      confirmPassword: 'StrongPass1'
+      firstName: 'Razan Daho',
+      lastName: 'Test',
+      email: 'razan@test.com',
+      phoneNumber: '1234567890',
+      address: '123 Main St',
+      ssn: '111-22-3333',
+      password: 'Password123',
+      confirmPassword: 'Password123'
     });
 
     component.submit();
@@ -67,13 +81,13 @@ describe('SignupComponent (Vitest)', () => {
     expect(httpPostMock).toHaveBeenCalledWith(
       '/api/v1/register',
       expect.objectContaining({
-        first_name: 'Jane',
-        last_name: 'Doe',
-        email: 'jane@example.com',
-        password: 'StrongPass1',
-        phone_number: '',
-        address: '',
-        ssn: ''
+        first_name: 'Razan Daho',
+        last_name: 'Test',
+        email: 'razan@test.com',
+        password: 'Password123',
+        phone_number: '1234567890',
+        address: '123 Main St',
+        ssn: '111-22-3333'
       })
     );
     expect(component.success()).toBe('Account created');
@@ -83,13 +97,7 @@ describe('SignupComponent (Vitest)', () => {
   it('sets error state when API request fails', () => {
     httpPostMock.mockReturnValue(throwError(() => new Error('fail')));
 
-    component.form.patchValue({
-      firstName: 'Jane',
-      lastName: 'Doe',
-      email: 'jane@example.com',
-      password: 'StrongPass1',
-      confirmPassword: 'StrongPass1'
-    });
+    component.form.patchValue(validBase);
 
     component.submit();
 

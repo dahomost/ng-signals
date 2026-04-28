@@ -2,22 +2,114 @@
   <h2>Create Account</h2>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
-
     <div class="row">
-      <input placeholder="First Name" formControlName="firstName" />
-      <input placeholder="Last Name" formControlName="lastName" />
+      <div class="field">
+        <input
+          placeholder="First name"
+          formControlName="firstName"
+          autocomplete="given-name"
+          [class.invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
+        />
+        @if (fieldMessage('firstName')) {
+          <span class="field-error">{{ fieldMessage('firstName') }}</span>
+        }
+      </div>
+      <div class="field">
+        <input
+          placeholder="Last name"
+          formControlName="lastName"
+          autocomplete="family-name"
+          [class.invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
+        />
+        @if (fieldMessage('lastName')) {
+          <span class="field-error">{{ fieldMessage('lastName') }}</span>
+        }
+      </div>
     </div>
 
-    <input placeholder="Email" formControlName="email" type="email" />
+    <div class="field">
+      <input
+        placeholder="Email"
+        formControlName="email"
+        type="email"
+        autocomplete="email"
+        [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
+      />
+      @if (fieldMessage('email')) {
+        <span class="field-error">{{ fieldMessage('email') }}</span>
+      }
+    </div>
 
-    <input placeholder="Phone Number" formControlName="phoneNumber" />
+    <div class="field">
+      <input
+        placeholder="Phone number"
+        formControlName="phoneNumber"
+        type="tel"
+        autocomplete="tel"
+        [class.invalid]="form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched"
+      />
+      @if (fieldMessage('phoneNumber')) {
+        <span class="field-error">{{ fieldMessage('phoneNumber') }}</span>
+      }
+    </div>
 
-    <input placeholder="Password" type="password" formControlName="password" />
+    <div class="field">
+      <input
+        placeholder="Street address"
+        formControlName="address"
+        autocomplete="street-address"
+        [class.invalid]="form.controls.address.invalid && form.controls.address.touched"
+      />
+      @if (fieldMessage('address')) {
+        <span class="field-error">{{ fieldMessage('address') }}</span>
+      }
+    </div>
 
-    <input placeholder="Confirm Password" type="password" formControlName="confirmPassword" />
+    <div class="field">
+      <input
+        placeholder="SSN (e.g. 111-22-3333)"
+        formControlName="ssn"
+        inputmode="numeric"
+        autocomplete="off"
+        [class.invalid]="form.controls.ssn.invalid && form.controls.ssn.touched"
+      />
+      @if (fieldMessage('ssn')) {
+        <span class="field-error">{{ fieldMessage('ssn') }}</span>
+      }
+    </div>
+
+    <div class="field">
+      <input
+        placeholder="Password"
+        type="password"
+        formControlName="password"
+        autocomplete="new-password"
+        [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
+      />
+      @if (fieldMessage('password')) {
+        <span class="field-error">{{ fieldMessage('password') }}</span>
+      }
+    </div>
+
+    <div class="field">
+      <input
+        placeholder="Confirm password"
+        type="password"
+        formControlName="confirmPassword"
+        autocomplete="new-password"
+        [class.invalid]="
+          (form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched) ||
+          (!!confirmPasswordMessage() && form.controls.confirmPassword.touched)
+        "
+      />
+      @if (confirmPasswordMessage()) {
+        <span class="field-error">{{ confirmPasswordMessage() }}</span>
+      } @else if (fieldMessage('confirmPassword')) {
+        <span class="field-error">{{ fieldMessage('confirmPassword') }}</span>
+      }
+    </div>
 
     <button type="submit" [disabled]="loading()">Create Account</button>
-
   </form>
 
   @if (loading()) {
