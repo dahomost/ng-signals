@@ -1,9 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-/** Same path the dev server proxies to serverless-offline (see proxy.conf.json). */
-const REGISTER_PATH = '/api/v1/register';
+/** Deployed API Gateway endpoint (dev stage). */
+const REGISTER_PATH = 'https://9clpwaoipj.execute-api.us-east-1.amazonaws.com/api/v1/register';
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
@@ -37,10 +37,10 @@ export class SignupComponent {
     ssn: ['', [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]],
   });
 
-  readonly passwordsMatch = computed(() => {
+  passwordsMatch(): boolean {
     const { password, confirmPassword } = this.form.getRawValue();
-    return password === confirmPassword;
-  });
+    return password.trim() === confirmPassword.trim();
+  }
 
   fieldMessage(controlName: string): string {
     const c = this.form.get(controlName);

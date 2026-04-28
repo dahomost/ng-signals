@@ -13,7 +13,7 @@ const validBase = {
   address: '123 Main St',
   ssn: '111-22-3333',
   password: 'StrongPass1',
-  confirmPassword: 'StrongPass1'
+  confirmPassword: 'StrongPass1',
 };
 
 describe('SignupComponent (Vitest)', () => {
@@ -25,7 +25,7 @@ describe('SignupComponent (Vitest)', () => {
     httpPostMock = vi.fn();
 
     TestBed.configureTestingModule({
-      providers: [FormBuilder, { provide: HttpClient, useValue: { post: httpPostMock } }]
+      providers: [FormBuilder, { provide: HttpClient, useValue: { post: httpPostMock } }],
     });
 
     component = TestBed.runInInjectionContext(() => new SignupComponent());
@@ -39,10 +39,20 @@ describe('SignupComponent (Vitest)', () => {
   it('returns false when passwords do not match', () => {
     component.form.patchValue({
       ...validBase,
-      confirmPassword: 'Different1'
+      confirmPassword: 'Different1',
     });
 
     expect(component.passwordsMatch()).toBe(false);
+  });
+
+  it('treats leading/trailing spaces as a match', () => {
+    component.form.patchValue({
+      ...validBase,
+      password: 'Password123 ',
+      confirmPassword: 'Password123',
+    });
+
+    expect(component.passwordsMatch()).toBe(true);
   });
 
   it('sets error and skips request when form is invalid', () => {
@@ -53,7 +63,7 @@ describe('SignupComponent (Vitest)', () => {
       address: 'x',
       ssn: 'bad',
       password: 'weak',
-      confirmPassword: 'weak'
+      confirmPassword: 'weak',
     });
 
     component.submit();
@@ -73,13 +83,13 @@ describe('SignupComponent (Vitest)', () => {
       address: '123 Main St',
       ssn: '111-22-3333',
       password: 'Password123',
-      confirmPassword: 'Password123'
+      confirmPassword: 'Password123',
     });
 
     component.submit();
 
     expect(httpPostMock).toHaveBeenCalledWith(
-      '/api/v1/register',
+      'https://9clpwaoipj.execute-api.us-east-1.amazonaws.com/api/v1/register',
       expect.objectContaining({
         first_name: 'Razan Daho',
         last_name: 'Test',
@@ -87,8 +97,8 @@ describe('SignupComponent (Vitest)', () => {
         password: 'Password123',
         phone_number: '1234567890',
         address: '123 Main St',
-        ssn: '111-22-3333'
-      })
+        ssn: '111-22-3333',
+      }),
     );
     expect(component.success()).toBe('Account created');
     expect(component.loading()).toBe(false);
