@@ -65,14 +65,15 @@ describe('SignupComponent (Vitest)', () => {
     component.submit();
 
     expect(httpPostMock).toHaveBeenCalledWith(
-      '/api/signup',
+      '/api/v1/register',
       expect.objectContaining({
         first_name: 'Jane',
         last_name: 'Doe',
         email: 'jane@example.com',
         password: 'StrongPass1',
-        role: 'user',
-        is_active: true
+        phone_number: '',
+        address: '',
+        ssn: ''
       })
     );
     expect(component.success()).toBe('Account created');

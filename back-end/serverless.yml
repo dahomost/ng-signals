@@ -1,0 +1,51 @@
+service: ng-signals-api
+
+frameworkVersion: '3'
+
+# DynamoDB table name (your existing table is `users`). Override: USERS_TABLE_NAME=my-table npx serverless deploy
+custom:
+  usersTableName: ${env:USERS_TABLE_NAME, 'users'}
+  offlineHttpPort: ${env:OFFLINE_HTTP_PORT, 31500}
+  offlineLambdaPort: ${env:OFFLINE_LAMBDA_PORT, 31501}
+  offlineWsPort: ${env:OFFLINE_WS_PORT, 31502}
+  serverless-offline:
+    httpPort: ${self:custom.offlineHttpPort}
+    lambdaPort: ${self:custom.offlineLambdaPort}
+    websocketPort: ${self:custom.offlineWsPort}
+    host: 127.0.0.1
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ${opt:region, 'us-east-1'}
+  httpApi:
+    cors: true
+  environment:
+    USERS_TABLE: ${self:custom.usersTableName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/${self:custom.usersTableName}
+
+functions:
+  ping:
+    handler: handler.ping
+    events:
+      - httpApi:
+          path: /api/v1/ping
+          method: get
+
+  register:
+    handler: handler.register
+    events:
+      - httpApi:
+          path: /api/v1/register
+          method: post
+
+plugins:
+  - serverless-offline
