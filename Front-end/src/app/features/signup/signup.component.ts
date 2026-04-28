@@ -12,7 +12,7 @@ const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
   selector: 'app-signup',
   imports: [ReactiveFormsModule],
   templateUrl: './signup.component.html',
-  styleUrl: './signup.component.scss'
+  styleUrl: './signup.component.scss',
 })
 export class SignupComponent {
   private readonly fb = inject(FormBuilder);
@@ -30,14 +30,11 @@ export class SignupComponent {
     phoneNumber: ['', [Validators.required]],
     password: [
       '',
-      [Validators.required, Validators.minLength(8), Validators.pattern(PASSWORD_PATTERN)]
+      [Validators.required, Validators.minLength(8), Validators.pattern(PASSWORD_PATTERN)],
     ],
     confirmPassword: ['', [Validators.required]],
     address: ['', [Validators.required, Validators.minLength(3)]],
-    ssn: [
-      '',
-      [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]
-    ]
+    ssn: ['', [Validators.required, Validators.pattern(/^\d{3}-\d{2}-\d{4}$/)]],
   });
 
   readonly passwordsMatch = computed(() => {
@@ -106,7 +103,7 @@ export class SignupComponent {
       password: v.password,
       phone_number: v.phoneNumber.trim(),
       address: v.address.trim(),
-      ssn: v.ssn.trim()
+      ssn: v.ssn.trim(),
     };
 
     this.http.post(REGISTER_PATH, payload).subscribe({
@@ -123,7 +120,7 @@ export class SignupComponent {
           this.error.set('Signup failed');
         }
         this.loading.set(false);
-      }
+      },
     });
   }
 }
