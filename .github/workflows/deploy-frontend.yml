@@ -44,4 +44,4 @@ jobs:
           aws-region: us-east-1
 
       - name: Deploy static files to S3
-        run: aws s3 sync dist/ng-signals s3://dev-daho --delete
+        run: aws s3 sync dist/ng-signals/browser s3://dev-daho --delete
