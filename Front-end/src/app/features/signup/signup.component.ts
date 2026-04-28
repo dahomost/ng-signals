@@ -4,6 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 /** Same path the dev server proxies to serverless-offline (see proxy.conf.json). */
 const REGISTER_PATH = '/api/v1/register';
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
 @Component({
   standalone: true,
@@ -24,9 +26,12 @@ export class SignupComponent {
   readonly form = this.fb.nonNullable.group({
     firstName: ['', [Validators.required, Validators.minLength(2)]],
     lastName: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.email, Validators.pattern(EMAIL_PATTERN)]],
     phoneNumber: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(8), Validators.pattern(PASSWORD_PATTERN)]
+    ],
     confirmPassword: ['', [Validators.required]],
     address: ['', [Validators.required, Validators.minLength(3)]],
     ssn: [
@@ -57,7 +62,15 @@ export class SignupComponent {
       return 'Enter a valid email address.';
     }
     if (e['pattern']) {
-      return 'Use format 111-22-3333.';
+      if (controlName === 'ssn') {
+        return 'Use format 111-22-3333.';
+      }
+      if (controlName === 'password') {
+        return 'Password must contain letters and numbers.';
+      }
+      if (controlName === 'email') {
+        return 'Enter a valid email address.';
+      }
     }
     return '';
   }
