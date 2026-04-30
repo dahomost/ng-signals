@@ -15,7 +15,8 @@ export async function getUserById(id) {
 }
 
 /**
- * Same shape as your previous Lambda: PutItem into `users` (or USERS_TABLE), bcrypt hash, crypto UUID.
+ * Same shape as your previous Lambda: PutItem into `users` (or USERS_TABLE),
+ * bcrypt hash, crypto UUID.
  * No duplicate-email check (your old handler did not have one).
  *
  * @param {object} input

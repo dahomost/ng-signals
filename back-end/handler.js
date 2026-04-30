@@ -21,7 +21,8 @@ function parseRegisterBody(event) {
   if (event?.body != null && typeof event.body === 'string' && event.body.length > 0) {
     let raw = event.body;
     if (event.isBase64Encoded) {
-      raw = Buffer.from(raw, 'base64').toString('utf8');
+      // Convert base64 to string because API Gateway sends the body as base64 encoded
+      raw = Buffer.from(raw, 'base64').toString('utf8'); 
     }
     try {
       return JSON.parse(raw);
@@ -29,6 +30,8 @@ function parseRegisterBody(event) {
       return null;
     }
   }
+  // check if the event is an object and has a first_name property
+  // otherwise return an empty object
   if (event && typeof event === 'object' && 'first_name' in event) {
     return event;
   }
