@@ -1,0 +1,11 @@
+com\ngsignals\backendspring\controller\ApiController.class
+com\ngsignals\backendspring\controller\GlobalExceptionHandler.class
+com\ngsignals\backendspring\repository\DynamoDbUserRepository.class
+com\ngsignals\backendspring\config\AwsConfig.class
+com\ngsignals\backendspring\dto\ErrorResponse.class
+com\ngsignals\backendspring\dto\RegisterResponse.class
+com\ngsignals\backendspring\dto\PingResponse.class
+com\ngsignals\backendspring\repository\UserRepository.class
+com\ngsignals\backendspring\service\RegisterService.class
+com\ngsignals\backendspring\BackendSpringApplication.class
+com\ngsignals\backendspring\dto\RegisterRequest.class

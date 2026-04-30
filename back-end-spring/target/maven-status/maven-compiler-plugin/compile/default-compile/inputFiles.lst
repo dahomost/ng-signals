@@ -1,0 +1,11 @@
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\BackendSpringApplication.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\config\AwsConfig.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\controller\ApiController.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\controller\GlobalExceptionHandler.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\dto\ErrorResponse.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\dto\PingResponse.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\dto\RegisterRequest.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\dto\RegisterResponse.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\repository\DynamoDbUserRepository.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\repository\UserRepository.java
+C:\Users\linad\projects\test\ng-signals\back-end-spring\src\main\java\com\ngsignals\backendspring\service\RegisterService.java
